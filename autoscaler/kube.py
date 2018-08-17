@@ -206,7 +206,10 @@ class KubeNode(object):
             region = labels['aws/az'][:-1]
             return (instance_id, region, instance_type, 'aws')
 
-        assert provider.startswith('azure:////'), provider
+        if not provider:
+            provider = self.original.obj['status']['nodeInfo'].get('systemUUID', '')
+
+        # assert provider.startswith('azure:////'), provider
         # Id is in wrong order: https://azure.microsoft.com/en-us/blog/accessing-and-using-azure-vm-unique-id/
         big_endian_vm_id = provider.replace('azure:////', '')
         parts = big_endian_vm_id.split('-')
